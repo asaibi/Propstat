@@ -1,27 +1,40 @@
-🧮 Matrice di Transizione
+#  Analisi Completa - Simulazione PageRank
 
-<pre>``` python transition_matrix = np.array([
+Questo documento raccoglie tutto il codice Python utilizzato per generare i grafici e i risultati presentati nella simulazione dell'algoritmo PageRank, organizzato slide per slide.
+
+---
+
+##  Matrice di Transizione
+
+```python
+transition_matrix = np.array([
     [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
     [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
     [0.0, 0.0, 0.0, 0.63, 0.0, 0.37],
     [0.0, 0.0, 0.0, 0.0, 0.65, 0.35],
     [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
     [0.0, 0.62, 0.0, 0.0, 0.0, 0.38],
-])</pre>
+])
+```
 
-<pre>```</pre>
+---
 
-🎯 Slide 3 – Frequenze dopo 10.000 passi
+##  Slide 3 – Frequenze dopo 10.000 passi
 
+```python
 visite = np.zeros(6)
 pagina_attuale = np.random.randint(6)
 for _ in range(10000):
     visite[pagina_attuale] += 1
     pagina_attuale = np.random.choice(6, p=transition_matrix[pagina_attuale])
 frequenze = visite / 10000
+```
 
-🔁 Slide 4 – Heatmap: indipendenza dalla partenza
+---
 
+##  Slide 4 – Heatmap: indipendenza dalla partenza
+
+```python
 risultati = []
 for i in range(6):
     visite = np.zeros(6)
@@ -31,11 +44,17 @@ for i in range(6):
         pagina_attuale = np.random.choice(6, p=transition_matrix[pagina_attuale])
     risultati.append(visite / 10000)
 
+import pandas as pd
+
 df = pd.DataFrame(risultati, index=[f'Start P{i+1}' for i in range(6)],
                   columns=[f'Pagina {i+1}' for i in range(6)])
+```
 
-🛑 Slide 5 – Frequenze con terminazione (p = 0.01)
+---
 
+##  Slide 5 – Frequenze con terminazione (p = 0.01)
+
+```python
 p_terminazione = 0.01
 max_passi = 100
 visite = np.zeros(6)
@@ -49,8 +68,14 @@ for _ in range(10000):
         pagina_attuale = np.random.choice(6, p=transition_matrix[pagina_attuale])
         passi += 1
 frequenze = visite / np.sum(visite)
+```
 
-📏 Slide 6 – Intervalli di confidenza per Pagina 2
+---
+
+##  Slide 6 – Intervalli di confidenza per Pagina 2
+
+```python
+from scipy.stats import norm
 
 def stima_frequenza_p2(K):
     output = []
@@ -76,9 +101,13 @@ for K in [50, 100, 200, 2000]:
     z = norm.ppf(0.975)
     ic = (media - z * errore, media + z * errore)
     print(f"K={K} → media: {media:.5f}, var: {var:.5f}, IC 95%: {ic}")
+```
 
-🧪 Slide 7 – Teorema del Limite Centrale
+---
 
+##  Slide 7 – Teorema del Limite Centrale
+
+```python
 def medie_campionarie(n_prove, n_campioni=50):
     return [np.mean(stima_frequenza_p2(n_prove)) for _ in range(n_campioni)]
 
@@ -88,5 +117,8 @@ campioni = {
     "50 prove": medie_campionarie(50),
     "100 prove": medie_campionarie(100),
 }
+```
 
-Ogni serie campioni[...] viene poi visualizzata in un istogramma.
+---
+
+✅ *Questo file può essere visualizzato direttamente su GitHub e usato per documentare tutti i risultati.*
