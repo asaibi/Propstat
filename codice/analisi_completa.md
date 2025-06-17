@@ -1,6 +1,6 @@
 🧮 Matrice di Transizione
 
-<pre>```transition_matrix = np.array([
+<pre>``` python transition_matrix = np.array([
     [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
     [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
     [0.0, 0.0, 0.0, 0.63, 0.0, 0.37],
