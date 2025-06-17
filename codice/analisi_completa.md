@@ -1,5 +1,6 @@
 🧮 Matrice di Transizione
 
+<pre>```python</pre>
 transition_matrix = np.array([
     [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
     [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
@@ -8,6 +9,7 @@ transition_matrix = np.array([
     [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
     [0.0, 0.62, 0.0, 0.0, 0.0, 0.38],
 ])
+<pre>```</pre>
 
 🎯 Slide 3 – Frequenze dopo 10.000 passi
 
