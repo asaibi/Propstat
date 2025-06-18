@@ -108,19 +108,46 @@ print(df)
 ##  Slide 5 – Frequenze con terminazione (p = 0.01)
 
 ```python
+import numpy as np
+
+# Parametri
+n_pagine = 6
+n_utenti = 10000
 p_terminazione = 0.01
-max_passi = 100
-visite = np.zeros(6)
-for _ in range(10000):
-    pagina_attuale = np.random.randint(6)
+max_passi_per_utente = 100
+
+# Matrice di transizione
+transition_matrix = np.array([
+    [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
+    [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
+    [0.0, 0.0, 0.0, 0.63, 0.0, 0.37],
+    [0.0, 0.0, 0.0, 0.0, 0.65, 0.35],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+    [0.0, 0.62, 0.0, 0.0, 0.0, 0.38],
+])
+
+# Contatore delle visite totali
+visite = np.zeros(n_pagine, dtype=int)
+
+# Simulazione per ciascun utente
+for _ in range(n_utenti):
+    pagina_attuale = np.random.randint(n_pagine)  # pagina iniziale casuale
     passi = 0
-    while passi < max_passi:
+    while passi < max_passi_per_utente:
         visite[pagina_attuale] += 1
         if np.random.rand() < p_terminazione:
-            break
-        pagina_attuale = np.random.choice(6, p=transition_matrix[pagina_attuale])
+            break  # termina con probabilità p
+        pagina_attuale = np.random.choice(n_pagine, p=transition_matrix[pagina_attuale])
         passi += 1
+
+# Calcolo frequenze normalizzate
 frequenze = visite / np.sum(visite)
+
+# Stampa risultato
+print("\n📊 Frequenze con terminazione (p = 0.01):\n")
+for i, freq in enumerate(frequenze):
+    print(f"Pagina {i+1}: {freq:.4f}")
+
 ```
 
 ---
