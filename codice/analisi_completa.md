@@ -128,32 +128,56 @@ frequenze = visite / np.sum(visite)
 ##  Slide 6 – Intervalli di confidenza per Pagina 2
 
 ```python
+import numpy as np
 from scipy.stats import norm
 
-def stima_frequenza_p2(K):
+# Parametri
+n_pagine = 6
+p_terminazione = 0.01
+max_passi = 100
+
+# Matrice di transizione
+transition_matrix = np.array([
+    [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
+    [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
+    [0.0, 0.0, 0.0, 0.63, 0.0, 0.37],
+    [0.0, 0.0, 0.0, 0.0, 0.65, 0.35],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+    [0.0, 0.62, 0.0, 0.0, 0.0, 0.38],
+])
+
+# Funzione per stimare la frequenza di visita alla Pagina 2
+def stima_frequenza_pagina_2(K):
     output = []
     for _ in range(K):
-        pagina_attuale = np.random.randint(6)
-        tot = p2 = passi = 0
-        while passi < 100:
+        pagina_attuale = np.random.randint(n_pagine)
+        p2 = 0
+        tot = 0
+        passi = 0
+        while passi < max_passi:
             if pagina_attuale == 1:
                 p2 += 1
             tot += 1
             if np.random.rand() < p_terminazione:
                 break
-            pagina_attuale = np.random.choice(6, p=transition_matrix[pagina_attuale])
+            pagina_attuale = np.random.choice(n_pagine, p=transition_matrix[pagina_attuale])
             passi += 1
         output.append(p2 / tot if tot > 0 else 0)
     return np.array(output)
 
+# Calcolo e stampa degli intervalli di confidenza per diversi K
 for K in [50, 100, 200, 2000]:
-    campione = stima_frequenza_p2(K)
+    campione = stima_frequenza_pagina_2(K)
     media = np.mean(campione)
-    var = np.var(campione, ddof=1)
-    errore = np.sqrt(var / K)
+    varianza = np.var(campione, ddof=1)
+    errore = np.sqrt(varianza / K)
     z = norm.ppf(0.975)
     ic = (media - z * errore, media + z * errore)
-    print(f"K={K} → media: {media:.5f}, var: {var:.5f}, IC 95%: {ic}")
+    print(f"\n📏 K = {K}")
+    print(f"  Media stimata: {media:.5f}")
+    print(f"  Varianza campionaria: {varianza:.5f}")
+    print(f"  Intervallo di confidenza 95%: ({ic[0]:.5f}, {ic[1]:.5f})")
+
 ```
 
 ---
@@ -161,15 +185,58 @@ for K in [50, 100, 200, 2000]:
 ##  Slide 7 – Teorema del Limite Centrale
 
 ```python
-def medie_campionarie(n_prove, n_campioni=50):
-    return [np.mean(stima_frequenza_p2(n_prove)) for _ in range(n_campioni)]
+import numpy as np
+from scipy.stats import norm
 
-campioni = {
-    "10 prove": medie_campionarie(10),
-    "30 prove": medie_campionarie(30),
-    "50 prove": medie_campionarie(50),
-    "100 prove": medie_campionarie(100),
-}
+# Usa la stessa matrice di transizione già definita
+transition_matrix = np.array([
+    [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
+    [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
+    [0.0, 0.0, 0.0, 0.63, 0.0, 0.37],
+    [0.0, 0.0, 0.0, 0.0, 0.65, 0.35],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+    [0.0, 0.62, 0.0, 0.0, 0.0, 0.38],
+])
+
+n_pagine = 6
+p_terminazione = 0.01
+max_passi = 100
+
+# Funzione per stimare la frequenza di visita alla Pagina 2
+def stima_frequenza_pagina_2(K):
+    output = []
+    for _ in range(K):
+        pagina_attuale = np.random.randint(n_pagine)
+        tot = p2 = passi = 0
+        while passi < max_passi:
+            if pagina_attuale == 1:
+                p2 += 1
+            tot += 1
+            if np.random.rand() < p_terminazione:
+                break
+            pagina_attuale = np.random.choice(n_pagine, p=transition_matrix[pagina_attuale])
+            passi += 1
+        output.append(p2 / tot if tot > 0 else 0)
+    return np.array(output)
+
+# Funzione per calcolare 50 medie campionarie
+def medie_campionarie(n_prove, n_campioni=50):
+    medie = []
+    for _ in range(n_campioni):
+        frequenze = stima_frequenza_pagina_2(n_prove)
+        media = np.mean(frequenze)
+        medie.append(media)
+    return np.array(medie)
+
+# Stampa a console le distribuzioni
+for taglia in [10, 30, 50, 100]:
+    campione = medie_campionarie(taglia)
+    media = np.mean(campione)
+    var = np.var(campione, ddof=1)
+    print(f"\n📊 Campione da {taglia} prove (50 medie calcolate):")
+    print(f"  Media generale: {media:.5f}")
+    print(f"  Varianza delle medie: {var:.5f}")
+    print(f"  Prime 10 medie: {np.round(campione[:10], 5)}")
 ```
 
 ---
