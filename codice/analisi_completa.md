@@ -47,7 +47,7 @@ print("Distribuzione finale delle visite:")
 for i in range(6):
     print(f"Pagina {i+1}: {frequenze[i]:.4f} ({visite[i]:.0f} visite)")
 
-# Optional: Save plot to file instead of showing it
+# Optional: Visualizzazione grafica
 plt.bar([f'Pagina {i+1}' for i in range(6)], frequenze, color='#4285F4')
 plt.title('Frequenze dopo 10.000 passi')
 plt.ylabel('Frequenza')
