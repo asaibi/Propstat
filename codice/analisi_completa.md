@@ -43,6 +43,11 @@ for _ in range(10000):
 
 frequenze = visite / 10000
 
+print("Distribuzione finale delle visite:")
+for i in range(6):
+    print(f"Pagina {i+1}: {frequenze[i]:.4f} ({visite[i]:.0f} visite)")
+
+# Optional: Save plot to file instead of showing it
 plt.bar([f'Pagina {i+1}' for i in range(6)], frequenze, color='#4285F4')
 plt.title('Frequenze dopo 10.000 passi')
 plt.ylabel('Frequenza')
@@ -56,19 +61,46 @@ plt.show()
 ##  Slide 4 – Heatmap: indipendenza dalla partenza
 
 ```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+transition_matrix = np.array([
+    [0.0, 0.23, 0.0, 0.77, 0.0, 0.0],
+    [0.09, 0.0, 0.06, 0.0, 0.0, 0.85],
+    [0.0, 0.0, 0.0, 0.63, 0.0, 0.37],
+    [0.0, 0.0, 0.0, 0.0, 0.65, 0.35],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+    [0.0, 0.62, 0.0, 0.0, 0.0, 0.38],
+])
+
+# Simulazione: indipendenza dalla pagina iniziale
+n_passi = 10000
+n_pagine = 6
 risultati = []
-for i in range(6):
-    visite = np.zeros(6)
-    pagina_attuale = i
-    for _ in range(10000):
+
+for pagina_iniziale in range(n_pagine):
+    visite = np.zeros(n_pagine, dtype=int)
+    pagina_attuale = pagina_iniziale
+    for _ in range(n_passi):
         visite[pagina_attuale] += 1
-        pagina_attuale = np.random.choice(6, p=transition_matrix[pagina_attuale])
-    risultati.append(visite / 10000)
+        pagina_attuale = np.random.choice(n_pagine, p=transition_matrix[pagina_attuale])
+    frequenze = visite / n_passi
+    risultati.append(frequenze)
 
+# Organizzazione risultati in DataFrame
 import pandas as pd
+df = pd.DataFrame(risultati, columns=[f'Pagina {i+1}' for i in range(n_pagine)],
+                  index=[f'Inizio in P{i+1}' for i in range(n_pagine)])
 
-df = pd.DataFrame(risultati, index=[f'Start P{i+1}' for i in range(6)],
-                  columns=[f'Pagina {i+1}' for i in range(6)])
+# Visualizzazione come heatmap
+import seaborn as sns
+plt.figure(figsize=(8, 5))
+sns.heatmap(df, annot=True, fmt=".2f", cmap="Blues", cbar=False)
+plt.title("Distribuzione finale delle visite partendo da ogni pagina", fontsize=12)
+plt.tight_layout()
+plt.show()
+print("\nDistribuzione finale delle visite:")
+print(df)
 ```
 
 ---
