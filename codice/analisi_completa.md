@@ -267,5 +267,3 @@ for taglia in [10, 30, 50, 100]:
 ```
 
 ---
-
-✅ *Questo file può essere visualizzato direttamente su GitHub e usato per documentare tutti i risultati.*
